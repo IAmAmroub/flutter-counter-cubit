@@ -13,6 +13,7 @@ class HomePage extends StatelessWidget {
         title: const Text("Counter Cubit App"),
         centerTitle: true,
       ),
+      // BlocListener handles the negative-value dialog.
       body: BlocListener<CounterCubit, int>(
         listener: (context, state) {
           if (state < 0) {
@@ -38,50 +39,72 @@ class HomePage extends StatelessWidget {
           }
         },
         child: Center(
-          child: BlocBuilder<CounterCubit, int>(
-            builder: ((context, state) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Counter Value",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+          // BlocConsumer listener handles special counter values.
+          child: BlocConsumer<CounterCubit, int>(
+            listener: (context, state) {
+              if (state == 10) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Counter reached 10!'),
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    '$state',
-                    style: const TextStyle(fontSize: 36),
+                );
+              } else if (state == -10) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Counter reached -10!'),
                   ),
-                  const SizedBox(height: 20),
-                  Row(
+                );
+              }
+            },
+
+            // BlocConsumer builder rebuilds the counter UI.
+            builder: (context, state) {
+              return BlocBuilder<CounterCubit, int>(
+                builder: ((context, state) {
+                  return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ElevatedButton(
-                        onPressed: (() {
-                          context.read<CounterCubit>().decrement();
-                        }),
-                        child: const Text(
-                          "-",
-                          style: TextStyle(fontSize: 48),
+                      const Text(
+                        "Counter Value",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 50),
-                      ElevatedButton(
-                          onPressed: (() {
-                            context.read<CounterCubit>().increment();
-                          }),
-                          child: const Text(
-                            "+",
-                            style: TextStyle(fontSize: 48),
-                          )),
+                      const SizedBox(height: 20),
+                      Text(
+                        '$state',
+                        style: const TextStyle(fontSize: 36),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: (() {
+                              context.read<CounterCubit>().decrement();
+                            }),
+                            child: const Text(
+                              "-",
+                              style: TextStyle(fontSize: 48),
+                            ),
+                          ),
+                          const SizedBox(width: 50),
+                          ElevatedButton(
+                              onPressed: (() {
+                                context.read<CounterCubit>().increment();
+                              }),
+                              child: const Text(
+                                "+",
+                                style: TextStyle(fontSize: 48),
+                              )),
+                        ],
+                      )
                     ],
-                  )
-                ],
+                  );
+                }),
               );
-            }),
+            },
           ),
         ),
       ),
