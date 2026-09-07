@@ -13,51 +13,76 @@ class HomePage extends StatelessWidget {
         title: const Text("Counter Cubit App"),
         centerTitle: true,
       ),
-      body: Center(
-        child: BlocBuilder<CounterCubit, int>(
-          builder: ((context, state) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Counter Value",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+      body: BlocListener<CounterCubit, int>(
+        listener: (context, state) {
+          if (state < 0) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Warning'),
+                  content: const Text(
+                    'The counter value is negative.',
                   ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  '$state',
-                  style: const TextStyle(fontSize: 36),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: (() {
-                        context.read<CounterCubit>().decrement();
-                      }),
-                      child: const Text(
-                        "-",
-                        style: TextStyle(fontSize: 48),
-                      ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('OK'),
                     ),
-                    const SizedBox(width: 50),
-                    ElevatedButton(
+                  ],
+                );
+              },
+            );
+          }
+        },
+        child: Center(
+          child: BlocBuilder<CounterCubit, int>(
+            builder: ((context, state) {
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Counter Value",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    '$state',
+                    style: const TextStyle(fontSize: 36),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
                         onPressed: (() {
-                          context.read<CounterCubit>().increment();
+                          context.read<CounterCubit>().decrement();
                         }),
                         child: const Text(
-                          "+",
+                          "-",
                           style: TextStyle(fontSize: 48),
-                        )),
-                  ],
-                )
-              ],
-            );
-          }),
+                        ),
+                      ),
+                      const SizedBox(width: 50),
+                      ElevatedButton(
+                          onPressed: (() {
+                            context.read<CounterCubit>().increment();
+                          }),
+                          child: const Text(
+                            "+",
+                            style: TextStyle(fontSize: 48),
+                          )),
+                    ],
+                  )
+                ],
+              );
+            }),
+          ),
         ),
       ),
     );
